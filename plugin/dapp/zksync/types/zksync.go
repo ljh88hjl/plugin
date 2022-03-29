@@ -23,8 +23,9 @@ const (
 	TySetPubKeyAction      = 6  //设置公钥
 	TyFullExitAction       = 7  //从L1完全退出
 	TySwapAction           = 8  //交换
-	TyContractToTreeAction = 9  //合约账户转入叶子
-	TyTreeToContractAction = 10 //叶子账户转入合约
+	TyFeeAction            = 9  //fee
+	TyContractToTreeAction = 10 //合约账户转入叶子
+	TyTreeToContractAction = 11 //叶子账户转入合约
 
 	//非电路action
 	TySetVerifyKeyAction = 102 //设置电路验证key
@@ -92,31 +93,41 @@ const (
 	AddrBitWidth        = 160 //20byte
 	Chain33AddrBitWidth = 256 //20byte
 	PubKeyBitWidth      = 256 //32byte
+	FeeAmountBitWidth   = 72  //fee op凑满one chunk=128bit，最大10byte
 
-	ChunkBitWidth = 80 //10byte
+	PacAmountManBitWidth = 35 //amount mantissa part, 比如12340000,只取1234部分，0000用exponent表示
+	PacAmountExpBitWidth = 5  //amount exponent part
+	PacFeeManBitWidth    = 11 //fee mantissa part
+	PacFeeExpBitWidth    = 5  //fee exponent part
+	MaxExponentVal       = 32 // 2**5 by exp bit width
+
+	ChunkBitWidth = 128               //one chunk 16 bytes
+	ChunkBytes    = ChunkBitWidth / 8 //16 bytes
 )
 
 const (
+	//BN254Fp=254bit,254-2 bit
 	MsgFirstWidth  = 252
 	MsgSecondWidth = 252
 	MsgThirdWidth  = 248
-	MsgWidth       = 752 //32byte
+	MsgWidth       = 752 //94 byte
 
 )
 
 //不同type chunk数量
 const (
-	DepositChunks       = 8
+	DepositChunks       = 5
 	Contract2TreeChunks = 3
 	Tree2ContractChunks = 3
-	TransferChunks      = 3
-	Transfer2NewChunks  = 8
-	WithdrawChunks      = 5
-	ForceExitChunks     = 5
-	FullExitChunks      = 5
+	TransferChunks      = 2
+	Transfer2NewChunks  = 5
+	WithdrawChunks      = 3
+	ForceExitChunks     = 3
+	FullExitChunks      = 3
 	SwapChunks          = 4
 	NoopChunks          = 1
-	ChangePubKeyChunks  = 7
+	ChangePubKeyChunks  = 5
+	FeeChunks           = 1
 )
 
 var (
