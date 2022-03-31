@@ -120,13 +120,11 @@ func (r *ZksyncInfoRow) Get(key string) ([]byte, error) {
 	return nil, types.ErrNotFound
 }
 
-
-
 var opt_commit_proof = &table.Option{
 	Prefix:  KeyPrefixLocalDB,
 	Name:    "proof",
 	Primary: "proofId",
-	Index:   []string{"height", "root"},
+	Index:   []string{"height", "root", "onChain"},
 }
 
 // NewCommitProofTable ...
@@ -162,6 +160,13 @@ func (r *CommitProofRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
+func (r *CommitProofRow) isProofNeedOnChain() int {
+	if len(r.GetOnChainPubDatas()) > 0 {
+		return 1
+	}
+	return 0
+}
+
 //Get 按照indexName 查询 indexValue
 func (r *CommitProofRow) Get(key string) ([]byte, error) {
 	if key == "proofId" {
@@ -170,10 +175,11 @@ func (r *CommitProofRow) Get(key string) ([]byte, error) {
 		return []byte(fmt.Sprintf("%s", r.GetNewTreeRoot())), nil
 	} else if key == "height" {
 		return []byte(fmt.Sprintf("%016d", r.GetBlockEnd())), nil
+	} else if key == "onChain" {
+		return []byte(fmt.Sprintf("%02d", r.isProofNeedOnChain())), nil
 	}
 	return nil, types.ErrNotFound
 }
-
 
 var opt_history_account_tree = &table.Option{
 	Prefix:  KeyPrefixLocalDB,
@@ -224,5 +230,3 @@ func (r *HistoryAccountTreeRow) Get(key string) ([]byte, error) {
 	}
 	return nil, types.ErrNotFound
 }
-
-
